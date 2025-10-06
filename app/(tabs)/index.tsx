@@ -1,98 +1,238 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import {
+  Button,
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  Text
+} from 'react-native'
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import {
+  RNHVDocsCapture,
+  RNHVNetworkHelper,
+  RNHVQRScanCapture,
+  RNHyperSnapParams,
+  RNHyperSnapSDK
+} from 'hypersnapsdk_reactnative'
+import { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+let initSuccess = false
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [liveness, setLiveness] = useState(RNHyperSnapParams.LivenessModeNone)
+  const [docType, setDocType] = useState(RNHyperSnapParams.DocumentTypeCard)
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+  const [documentOutput, setDocumentOutput] = useState('')
+  const [faceOutput, setFaceOutput] = useState('')
+  const [qrOutput, setQrOutput] = useState('')
+
+  const printDictionary = (dict: any, out: any, isSuccess: any) => {
+    let result = isSuccess ? 'Results:' : 'Error Received:'
+    for (let key in dict) {
+      result += `\n${key} : ${dict[key]}`
+    }
+
+    if (out === 'doc') {
+      setDocumentOutput(result)
+    } else if (out === 'qr') {
+      setQrOutput(result)
+    } else {
+      setFaceOutput(result)
+    }
+  }
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      requestCameraPermission()
+    }
+
+    RNHyperSnapSDK.initialize('', '', RNHyperSnapParams.RegionAsiaPacific)
+    initSuccess = true
+  }, [])
+
+  const hvDocs = () => {
+    // RNHyperSnapSDK.startUserSession(
+    //   `txn_${Date.now()}_50c06576-9789-4bf9-927d-cc7e625e2fb0}`
+    // )
+
+    const closure = (error: any, result: any) => {
+      if (error != null && Object.keys(error).length > 0) {
+        console.log('error', error)
+        printDictionary(error, 'doc', false)
+      } else {
+        console.log('result', result)
+        printDictionary(result, 'doc', true)
+
+        try {
+          let params = {}
+          let headers = {
+            transactionId: `txn_${Date.now()}_50c06576-9789-4bf9-927d-cc7e625e2fb0}`
+          }
+          var closure = (error: any, result: any, headers: any) => {
+            if (error != null && Object.keys(error).length > 0) {
+              console.log('error', error)
+              printDictionary(error, 'doc', true)
+            } else {
+              console.log('result', result)
+              printDictionary(result, 'doc', true)
+            }
+          }
+
+          const docImageUri = result['imageUri']
+
+          RNHVNetworkHelper.makeOCRCall(
+            'https://vnm-docs.hyperverge.co/v2/nationalID',
+            docImageUri,
+            params,
+            headers,
+            closure
+          )
+
+          // RNHVFaceCapture.setLivenessMode(
+          //   RNHyperSnapParams.LivenessModeTextureLiveness
+          // )
+          // RNHVFaceCapture.start((error: any, result: any, headers: any) => {
+          //   if (error != null) {
+          //     printDictionary(error, 'face', false) //passing error to printDictonary to print the error
+          //   } else {
+          //     printDictionary(result, 'face', true) //passing error to printDictonary to print the result
+          //     const faceImageUri = result['imageUri']
+
+          //     try {
+          //       let params = {}
+          //       let headers = {}
+          //       var closure = (error: any, result: any, headers: any) => {
+          //         if (error != null) {
+          //           console.log('error', error)
+          //           printDictionary(error, 'face', false)
+          //         } else {
+          //           console.log('result', result)
+          //           printDictionary(result, 'face', true)
+          //         }
+          //       }
+          //       RNHVNetworkHelper.makeFaceMatchCall(
+          //         'https://apac.faceid.hyperverge.co/v1/photo/verifyPair',
+          //         faceImageUri,
+          //         docImageUri,
+          //         params,
+          //         headers,
+          //         closure
+          //       )
+          //     } catch (error) {
+          //       console.log('error')
+          //     }
+          //   }
+          // })
+        } catch (error) {
+          console.log('error')
+        }
+      }
+    }
+
+    RNHVDocsCapture.setShouldShowReviewScreen(true)
+    RNHVDocsCapture.setDocumentType(docType)
+    RNHVDocsCapture.setDocCaptureSubText('National ID')
+    RNHVDocsCapture.setDocCaptureDescription(
+      'Place your National ID inside the box'
+    )
+    RNHVDocsCapture.start(closure)
+  }
+
+  const qrScan = () => {
+    const qrClosure = (error: any, result: any) => {
+      if (error != null) {
+        printDictionary(error, 'qr', false)
+      } else {
+        console.log('QR Result:', result)
+        printDictionary(result, 'qr', true)
+      }
+    }
+    RNHVQRScanCapture.start(qrClosure)
+  }
+
+  return (
+    <SafeAreaView
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+    >
+      {/* Document Modal */}
+      <Button onPress={hvDocs} title='Start Document Verification' />
+      <Text style={styles.results}>{documentOutput}</Text>
+
+      {/* QR Modal */}
+      {/* <Button onPress={qrScan} title='Start QR Scanner' />
+      <Text style={styles.results}>{qrOutput}</Text> */}
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 8
   },
   stepContainer: {
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 8
   },
   reactLogo: {
     height: 178,
     width: 290,
     bottom: 0,
     left: 0,
-    position: 'absolute',
+    position: 'absolute'
   },
-});
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF'
+  },
+  intro: {
+    margin: 10
+  },
+  results: {
+    fontSize: 18,
+    textAlign: 'center',
+    margin: 10
+  },
+  subcontainer: {
+    margin: 10
+  },
+  inputstyle: {
+    width: '50%',
+    margin: 10
+  },
+  button: {
+    backgroundColor: 'lightblue',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    padding: 12,
+    margin: 16,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+})
+
+async function requestCameraPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'Camera permissions are required by HyperSnapSDK',
+        message:
+          'HyperSnapSDK needs access to your camera so you can take awesome pictures.',
+        buttonPositive: 'OK',
+        buttonNegative: 'Cancel',
+        buttonNeutral: 'Ask Me Later'
+      }
+    )
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Camera Permissions have been successfully set.')
+    } else {
+      console.log('Camera permission denied')
+    }
+  } catch (err) {
+    console.warn(err)
+  }
+}
