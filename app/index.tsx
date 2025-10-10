@@ -1,3 +1,4 @@
+import * as Application from 'expo-application'
 import { readAsStringAsync } from 'expo-file-system/legacy'
 import {
   RNHVDocsCapture,
@@ -192,10 +193,15 @@ export default function HomeScreen() {
     if (message === 'getDeviceInfo') {
       const deviceId = await getUniqueId()
 
+      const version = Application.nativeApplicationVersion
+      const buildNumber = Application.nativeBuildVersion
+
       const deviceInfo = {
         platform: Platform.OS,
         osVersion: Platform.Version,
-        deviceId
+        deviceId,
+        version,
+        buildNumber
       }
 
       webviewRef.current?.injectJavaScript(`
