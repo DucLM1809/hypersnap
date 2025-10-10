@@ -216,16 +216,16 @@ export default function HomeScreen() {
     <SafeAreaView style={{ flex: 1 }}>
       <WebView
         ref={webviewRef}
-        originWhitelist={['https://acm-mobile.fecredit.cloud']}
+        originWhitelist={[`${process.env.EXPO_PUBLIC_APP_URL}`]}
         source={{
-          uri: 'https://acm-mobile.fecredit.cloud'
+          uri: `${process.env.EXPO_PUBLIC_APP_URL}`
         }}
         onMessage={onMessage}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         setSupportMultipleWindows={false}
         allowsInlineMediaPlayback={false}
-        allowingReadAccessToURL='https://acm-mobile.fecredit.cloud'
+        allowingReadAccessToURL={`${process.env.EXPO_PUBLIC_APP_URL}`}
         thirdPartyCookiesEnabled={false}
         javaScriptCanOpenWindowsAutomatically={false}
         dataDetectorTypes='none'
