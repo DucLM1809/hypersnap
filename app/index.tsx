@@ -3,6 +3,7 @@ import {
   RNHVDocsCapture,
   RNHVFaceCapture,
   RNHVNetworkHelper,
+  RNHVQRScanCapture,
   RNHyperSnapParams,
   RNHyperSnapSDK
 } from 'hypersnapsdk_reactnative'
@@ -46,7 +47,7 @@ export default function HomeScreen() {
             encoding: 'base64'
           })
 
-          var closure = (error: any, result: any, headers: any) => {
+          var closure = (error: any, result: any) => {
             if (error != null && Object.keys(error).length > 0) {
               console.log('error', error)
             } else {
@@ -150,6 +151,25 @@ export default function HomeScreen() {
     })
   }
 
+  const hvQRScan = () => {
+    const qrClosure = (error: any, result: any) => {
+      if (error != null && Object.keys(error).length > 0) {
+        console.log(error)
+      } else {
+        console.log('QR Result:', result)
+
+        webviewRef.current?.injectJavaScript(`
+              if (window.handleQRCodeCameraImage) {
+                console.log('Sending image URI to React app');
+                window.handleQRCodeCameraImage(${JSON.stringify(result)});
+              }
+            `)
+      }
+    }
+
+    RNHVQRScanCapture.start(qrClosure)
+  }
+
   const onMessage = async (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data
 
@@ -163,6 +183,10 @@ export default function HomeScreen() {
 
     if (message === 'openSelfieCamera') {
       hvFaceCapture()
+    }
+
+    if (message === 'openQRCodeCamera') {
+      hvQRScan()
     }
 
     if (message === 'getDeviceInfo') {
