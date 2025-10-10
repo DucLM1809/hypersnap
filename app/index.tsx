@@ -87,19 +87,24 @@ export default function HomeScreen() {
 
     RNHVDocsCapture.setShouldShowReviewScreen(true)
     RNHVDocsCapture.setDocumentType(RNHyperSnapParams.DocumentTypeCard)
-    RNHVDocsCapture.setDocCaptureSubText('National ID')
+    RNHVDocsCapture.setDocCaptureTitle(
+      type === 'front' ? 'Chụp hình CCCD mặt trước' : 'Chụp hình CCCD mặt sau'
+    )
+    RNHVDocsCapture.setDocCaptureSubText('Căn cước công dân')
     RNHVDocsCapture.setDocCaptureDescription(
-      'Place your National ID inside the box'
+      'Đặt căn cước công dân của bạn vào trong khung hình và chụp ảnh'
     )
     RNHVDocsCapture.start(closure)
   }
 
   const hvFaceCapture = () => {
+    RNHVFaceCapture.setFaceCaptureTitle(
+      'Đặt khuôn mặt của bạn vào trong khung hình'
+    )
     RNHVFaceCapture.setLivenessMode(
       RNHyperSnapParams.LivenessModeTextureLiveness
     )
-
-    RNHVFaceCapture.start(async (error: any, result: any, headers: any) => {
+    RNHVFaceCapture.start(async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
         console.log('error', error)
       } else {
