@@ -8,6 +8,7 @@ import {
 } from 'hypersnapsdk_reactnative'
 import { useEffect, useRef } from 'react'
 import { PermissionsAndroid, Platform, Text, View } from 'react-native'
+import { getUniqueId } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 
@@ -144,7 +145,7 @@ export default function HomeScreen() {
     })
   }
 
-  const onMessage = (event: WebViewMessageEvent) => {
+  const onMessage = async (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data
 
     if (message === 'openCCCDFrontCamera') {
@@ -157,6 +158,22 @@ export default function HomeScreen() {
 
     if (message === 'openSelfieCamera') {
       hvFaceCapture()
+    }
+
+    if (message === 'getDeviceInfo') {
+      const deviceId = await getUniqueId()
+
+      const deviceInfo = {
+        platform: Platform.OS,
+        osVersion: Platform.Version,
+        deviceId
+      }
+
+      webviewRef.current?.injectJavaScript(`
+              if (window.handleGetDeviceInfo) {
+                window.handleGetDeviceInfo(${JSON.stringify(deviceInfo)});
+              }
+            `)
     }
   }
 
