@@ -1,3 +1,5 @@
+import { usePushNotifications } from '@/hooks/use-push-notifications'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import { readAsStringAsync } from 'expo-file-system/legacy'
 import {
@@ -15,6 +17,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 
 export default function HomeScreen() {
+  usePushNotifications()
+
   const webviewRef = useRef<WebView>(null)
 
   useEffect(() => {
@@ -192,6 +196,7 @@ export default function HomeScreen() {
 
     if (message === 'getDeviceInfo') {
       const deviceId = await getUniqueId()
+      const deviceToken = await AsyncStorage.getItem('fcmToken')
 
       const version = Application.nativeApplicationVersion
       const buildNumber = Application.nativeBuildVersion
@@ -201,7 +206,8 @@ export default function HomeScreen() {
         osVersion: Platform.Version,
         deviceId,
         version,
-        buildNumber
+        buildNumber,
+        deviceToken
       }
 
       webviewRef.current?.injectJavaScript(`
