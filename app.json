@@ -10,8 +10,11 @@
     "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.duc1809.FacingApp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "org.fecredit.FacingApp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "HyperSnapSDK needs access to your camera so you can take awesome pictures.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -44,9 +47,7 @@
             "backgroundColor": "#000000"
           }
         }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/messaging"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

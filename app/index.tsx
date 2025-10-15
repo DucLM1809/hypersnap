@@ -1,4 +1,3 @@
-import { requestNotificationPermission } from '@/hooks/use-push-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import { readAsStringAsync } from 'expo-file-system/legacy'
@@ -29,11 +28,11 @@ export default function HomeScreen() {
       process.env.EXPO_PUBLIC_APP_KEY,
       RNHyperSnapParams.RegionAsiaPacific
     )
+
+    RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
   }, [])
 
   const hvDocs = (type: 'front' | 'back') => {
-    RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
-
     const closure = async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
         console.log('error', error)
@@ -222,7 +221,7 @@ export default function HomeScreen() {
         ref={webviewRef}
         originWhitelist={[`${process.env.EXPO_PUBLIC_APP_URL}`]}
         source={{
-          uri: `${process.env.EXPO_PUBLIC_APP_URL}`
+          uri: `${process.env.EXPO_PUBLIC_APP_URL}/sign-in`
         }}
         onMessage={onMessage}
         javaScriptEnabled={true}
@@ -271,8 +270,6 @@ async function requestPermission() {
     } else {
       console.log('Camera permission denied')
     }
-
-    requestNotificationPermission()
   } catch (err) {
     console.warn(err)
   }
