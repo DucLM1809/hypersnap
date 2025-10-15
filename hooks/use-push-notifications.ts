@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import messaging, { firebase } from '@react-native-firebase/messaging'
 import { PermissionsAndroid, Platform } from 'react-native'
-import Toast from 'react-native-toast-message'
+import { Toast } from 'toastify-react-native'
 import config from '../google-services.json'
 
 export const requestNotificationPermission = async () => {
@@ -77,7 +77,7 @@ const getToken = async () => {
 }
 
 const handleForegroundNotification = () => {
-  const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+  messaging().onMessage(async (remoteMessage) => {
     console.log('Foreground message received:', remoteMessage)
 
     Toast.show({
@@ -86,8 +86,6 @@ const handleForegroundNotification = () => {
       text2: remoteMessage.notification?.body
     })
   })
-
-  return unsubscribe
 }
 
 const handleBackgroundNotifications = async () => {

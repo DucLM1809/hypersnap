@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+import ToastManager from 'toastify-react-native'
 
 import { useColorScheme } from '@/hooks/use-color-scheme'
 
@@ -21,6 +22,8 @@ export default function RootLayout() {
         <Stack.Screen name='index' options={{ headerShown: false }} />
       </Stack>
       <StatusBar style='auto' />
+
+      <ToastManager />
     </ThemeProvider>
   )
 }
