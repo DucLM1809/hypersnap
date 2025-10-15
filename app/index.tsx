@@ -29,11 +29,11 @@ export default function HomeScreen() {
       process.env.EXPO_PUBLIC_APP_KEY,
       RNHyperSnapParams.RegionAsiaPacific
     )
+
+    RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
   }, [])
 
   const hvDocs = (type: 'front' | 'back') => {
-    RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
-
     const closure = async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
         console.log('error', error)
@@ -209,8 +209,8 @@ export default function HomeScreen() {
       }
 
       webviewRef.current?.injectJavaScript(`
-              if (window.handleGetDeviceInfo) {
-                window.handleGetDeviceInfo(${JSON.stringify(deviceInfo)});
+              if (window.handleDeviceInfo) {
+                window.handleDeviceInfo(${JSON.stringify(deviceInfo)});
               }
             `)
     }
