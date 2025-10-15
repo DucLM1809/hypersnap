@@ -1,4 +1,4 @@
-import { usePushNotifications } from '@/hooks/use-push-notifications'
+import { requestNotificationPermission } from '@/hooks/use-push-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import { readAsStringAsync } from 'expo-file-system/legacy'
@@ -17,13 +17,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 
 export default function HomeScreen() {
-  usePushNotifications()
-
   const webviewRef = useRef<WebView>(null)
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      requestCameraPermission()
+      requestPermission()
     }
 
     RNHyperSnapSDK.initialize(
@@ -254,7 +252,7 @@ export default function HomeScreen() {
   )
 }
 
-async function requestCameraPermission() {
+async function requestPermission() {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -267,11 +265,14 @@ async function requestCameraPermission() {
         buttonNeutral: 'Ask Me Later'
       }
     )
+
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log('Camera Permissions have been successfully set.')
     } else {
       console.log('Camera permission denied')
     }
+
+    requestNotificationPermission()
   } catch (err) {
     console.warn(err)
   }

@@ -10,7 +10,8 @@
     "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.duc1809.FacingApp"
+      "bundleIdentifier": "com.duc1809.FacingApp",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
