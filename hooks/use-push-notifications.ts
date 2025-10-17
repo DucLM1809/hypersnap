@@ -59,16 +59,21 @@ const getToken = async () => {
         console.warn('APNs token is null. Check APNs setup.')
         return
       }
+
+      if (!(await AsyncStorage.getItem('fcmToken'))) {
+        await AsyncStorage.setItem('fcmToken', apnsToken)
+      }
+
       console.log('APNs Token:', apnsToken)
+    } else {
+      const fcmToken = await messaging().getToken()
+
+      if (!(await AsyncStorage.getItem('fcmToken'))) {
+        await AsyncStorage.setItem('fcmToken', fcmToken)
+      }
+
+      console.log('FCM Token:', fcmToken)
     }
-
-    const fcmToken = await messaging().getToken()
-
-    if (!(await AsyncStorage.getItem('fcmToken'))) {
-      await AsyncStorage.setItem('fcmToken', fcmToken)
-    }
-
-    console.log('FCM Token:', fcmToken)
 
     // return fcmToken
   } catch (error) {

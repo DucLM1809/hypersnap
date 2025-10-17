@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FacingApp",
-    "slug": "FacingApp",
+    "name": "ACM",
+    "slug": "ACM",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/fe_logo.png",
@@ -14,7 +14,9 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSCameraUsageDescription": "HyperSnapSDK needs access to your camera so you can take awesome pictures.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSUserTrackingUsageDescription": "We use notifications to keep you updated.",
+        "UIBackgroundModes": ["remote-notification", "fetch"]
       }
     },
     "android": {
@@ -24,7 +26,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.duc1809.FacingApp",
+      "package": "vn.com.fecredit.acm.uat",
       "versionCode": 2,
       "googleServicesFile": "./google-services.json",
       "permissions": ["POST_NOTIFICATIONS"]
