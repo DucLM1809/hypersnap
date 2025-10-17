@@ -10,7 +10,7 @@
     "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.duc1809.FacingApp",
+      "bundleIdentifier": "vn.com.fecredit.acm.uat",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -40,6 +40,19 @@
           "backgroundColor": "#ffffff",
           "dark": {
             "backgroundColor": "#000000"
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "extraPods": [
+              { "name": "FirebaseCore", "modular_headers": true },
+              { "name": "FirebaseCoreInternal", "modular_headers": true },
+              { "name": "GoogleUtilities", "modular_headers": true }
+            ]
           }
         }
       ],
