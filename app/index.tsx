@@ -22,6 +22,8 @@ export default function HomeScreen() {
   useEffect(() => {
     if (Platform.OS === 'android') {
       requestPermission()
+    } else {
+      requestNotificationPermission()
     }
 
     RNHyperSnapSDK.initialize(
@@ -207,6 +209,8 @@ export default function HomeScreen() {
         buildNumber,
         deviceToken
       }
+
+      console.log('deviceInfo', deviceInfo)
 
       webviewRef.current?.injectJavaScript(`
               if (window.handleDeviceInfo) {

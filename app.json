@@ -12,6 +12,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "vn.com.fecredit.acm.uat",
       "googleServicesFile": "./GoogleService-Info.plist",
+      "entitlements": {
+        "aps-environment": "production"
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "HyperSnapSDK needs access to your camera so you can take awesome pictures.",
         "ITSAppUsesNonExemptEncryption": false,
