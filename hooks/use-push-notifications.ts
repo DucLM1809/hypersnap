@@ -84,7 +84,8 @@ const handleForegroundNotification = () => {
     Toast.show({
       type: 'success',
       text1: remoteMessage.notification?.title,
-      text2: remoteMessage.notification?.body
+      text2: remoteMessage.notification?.body,
+      visibilityTime: 5000
     })
   })
 }

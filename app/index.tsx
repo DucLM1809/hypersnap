@@ -241,6 +241,10 @@ export default function HomeScreen() {
         allowsLinkPreview={false}
         style={{ flex: 1 }}
         startInLoadingState
+        bounces={false}
+        overScrollMode='never'
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={false}
         renderError={() => (
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
