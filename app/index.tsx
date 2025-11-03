@@ -2,6 +2,7 @@ import { requestNotificationPermission } from '@/hooks/use-push-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import { readAsStringAsync } from 'expo-file-system/legacy'
+import * as Location from 'expo-location'
 import {
   RNHVDocsCapture,
   RNHVFaceCapture,
@@ -22,8 +23,6 @@ export default function HomeScreen() {
   useEffect(() => {
     if (Platform.OS === 'android') {
       requestPermission()
-    } else {
-      requestNotificationPermission()
     }
 
     RNHyperSnapSDK.initialize(
@@ -59,7 +58,6 @@ export default function HomeScreen() {
               if (type === 'front') {
                 webviewRef.current?.injectJavaScript(`
               if (window.handleCCCDFrontCameraImage) {
-                console.log('Sending image URI to React app');
                 window.handleCCCDFrontCameraImage(${JSON.stringify(
                   `data:image/jpeg;base64,${base64}`
                 )}, ${JSON.stringify(result)});
@@ -68,7 +66,6 @@ export default function HomeScreen() {
               } else {
                 webviewRef.current?.injectJavaScript(`
               if (window.handleCCCDBackCameraImage) {
-                console.log('Sending image URI to React app');
                 window.handleCCCDBackCameraImage(${JSON.stringify(
                   `data:image/jpeg;base64,${base64}`
                 )}, ${JSON.stringify(result)});
@@ -122,7 +119,6 @@ export default function HomeScreen() {
 
         webviewRef.current?.injectJavaScript(`
               if (window.handleSelfieCameraImage) {
-                console.log('Sending image URI to React app');
                 window.handleSelfieCameraImage(${JSON.stringify(
                   `data:image/jpeg;base64,${base64}`
                 )}, ${JSON.stringify(result)});
@@ -165,7 +161,6 @@ export default function HomeScreen() {
 
         webviewRef.current?.injectJavaScript(`
               if (window.handleQRCodeCameraImage) {
-                console.log('Sending image URI to React app');
                 window.handleQRCodeCameraImage(${JSON.stringify(result)});
               }
             `)
@@ -210,11 +205,39 @@ export default function HomeScreen() {
         deviceToken
       }
 
-      console.log('deviceInfo', deviceInfo)
-
       webviewRef.current?.injectJavaScript(`
-              if (window.handleDeviceInfo) {
-                window.handleDeviceInfo(${JSON.stringify(deviceInfo)});
+        if (window.handleDeviceInfo) {
+          window.handleDeviceInfo(${JSON.stringify(deviceInfo)});
+          }
+          `)
+    }
+
+    if (message === 'getLocation') {
+      await getLocation()
+    }
+  }
+
+  const getLocation = async () => {
+    const hasPermission = await requestLocationPermission()
+
+    if (!hasPermission) {
+      webviewRef.current?.injectJavaScript(`
+              if (window.handleGetLocation) {
+                window.handleGetLocation(${JSON.stringify(hasPermission)});
+              }
+            `)
+    }
+
+    const loc = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High
+    })
+
+    if (loc) {
+      webviewRef.current?.injectJavaScript(`
+              if (window.handleGetLocation) {
+                window.handleGetLocation(${JSON.stringify(
+                  hasPermission
+                )}, ${JSON.stringify(loc.coords)});
               }
             `)
     }
@@ -280,8 +303,14 @@ async function requestPermission() {
       console.log('Camera permission denied')
     }
 
-    requestNotificationPermission()
+    await requestNotificationPermission()
   } catch (err) {
     console.warn(err)
   }
+}
+
+async function requestLocationPermission() {
+  const { granted } = await Location.requestForegroundPermissionsAsync()
+
+  return granted
 }

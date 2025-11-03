@@ -19,7 +19,10 @@
         "NSCameraUsageDescription": "HyperSnapSDK needs access to your camera so you can take awesome pictures.",
         "ITSAppUsesNonExemptEncryption": false,
         "NSUserTrackingUsageDescription": "We use notifications to keep you updated.",
-        "UIBackgroundModes": ["remote-notification", "fetch"]
+        "UIBackgroundModes": ["remote-notification", "fetch"],
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide location-based features.",
+        "NSLocationAlwaysUsageDescription": "We use your location even when the app is in the background to improve tracking accuracy.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow access to your location for full functionality, even when the app is not active."
       }
     },
     "android": {
