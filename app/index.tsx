@@ -193,9 +193,6 @@ export default function HomeScreen() {
       const deviceId = await getUniqueId()
       const deviceToken = await AsyncStorage.getItem('fcmToken')
 
-      console.log('deviceId', deviceId)
-      console.log('deviceToken', deviceToken)
-
       const version = Application.nativeApplicationVersion
       const buildNumber = Application.nativeBuildVersion
 
