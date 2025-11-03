@@ -23,6 +23,8 @@ export default function HomeScreen() {
   useEffect(() => {
     if (Platform.OS === 'android') {
       requestPermission()
+    } else {
+      requestNotificationPermission()
     }
 
     RNHyperSnapSDK.initialize(
@@ -157,8 +159,6 @@ export default function HomeScreen() {
       if (error != null && Object.keys(error).length > 0) {
         console.log(error)
       } else {
-        console.log('QR Result:', result)
-
         webviewRef.current?.injectJavaScript(`
               if (window.handleQRCodeCameraImage) {
                 window.handleQRCodeCameraImage(${JSON.stringify(result)});
@@ -192,6 +192,9 @@ export default function HomeScreen() {
     if (message === 'getDeviceInfo') {
       const deviceId = await getUniqueId()
       const deviceToken = await AsyncStorage.getItem('fcmToken')
+
+      console.log('deviceId', deviceId)
+      console.log('deviceToken', deviceToken)
 
       const version = Application.nativeApplicationVersion
       const buildNumber = Application.nativeBuildVersion
