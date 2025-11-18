@@ -20,20 +20,33 @@ import { WebView, WebViewMessageEvent } from 'react-native-webview'
 export default function HomeScreen() {
   const webviewRef = useRef<WebView>(null)
 
+  const requestAndroidPermission = async () => {
+    await requestNotificationPermission()
+    await requestLocationPermission()
+    await requestCameraPermission()
+  }
+
+  const requestIOSPermission = async () => {
+    await requestNotificationPermission()
+    await requestLocationPermission()
+  }
+
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      requestPermission()
-    } else {
-      requestNotificationPermission()
-    }
+    ;(async () => {
+      if (Platform.OS === 'android') {
+        await requestAndroidPermission()
+      } else {
+        await requestIOSPermission()
+      }
 
-    RNHyperSnapSDK.initialize(
-      process.env.EXPO_PUBLIC_APP_ID,
-      process.env.EXPO_PUBLIC_APP_KEY,
-      RNHyperSnapParams.RegionAsiaPacific
-    )
+      RNHyperSnapSDK.initialize(
+        process.env.EXPO_PUBLIC_APP_ID,
+        process.env.EXPO_PUBLIC_APP_KEY,
+        RNHyperSnapParams.RegionAsiaPacific
+      )
 
-    RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
+      RNHyperSnapSDK.startUserSession(`us_${Date.now()}`)
+    })()
   }, [])
 
   const hvDocs = (type: 'front' | 'back') => {
@@ -283,7 +296,7 @@ export default function HomeScreen() {
   )
 }
 
-async function requestPermission() {
+async function requestCameraPermission() {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -302,8 +315,6 @@ async function requestPermission() {
     } else {
       console.log('Camera permission denied')
     }
-
-    await requestNotificationPermission()
   } catch (err) {
     console.warn(err)
   }
