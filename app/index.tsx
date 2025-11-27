@@ -28,6 +28,7 @@ export default function HomeScreen() {
 
   const requestIOSPermission = async () => {
     await requestNotificationPermission()
+    await new Promise((resolve) => setTimeout(resolve, 500))
     await requestLocationPermission()
   }
 
