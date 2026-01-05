@@ -1,7 +1,11 @@
 import { requestNotificationPermission } from '@/hooks/use-push-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
-import { readAsStringAsync } from 'expo-file-system/legacy'
+import {
+  deleteAsync,
+  readAsStringAsync,
+  readDirectoryAsync
+} from 'expo-file-system/legacy'
 import * as Location from 'expo-location'
 import {
   RNHVDocsCapture,
@@ -51,6 +55,43 @@ export default function HomeScreen() {
     })()
   }, [])
 
+  const cleanUpHypervergeData = async (rawUri: string) => {
+    try {
+      // Ensure uri is properly formatted for expo-file-system
+      const uri = rawUri.startsWith('file://') ? rawUri : `file://${rawUri}`
+
+      if (uri.includes('/hv/')) {
+        // Find the 'hv' directory path
+        const hvIndex = uri.indexOf('/hv/')
+        const hvDir = uri.substring(0, hvIndex + 3) // include '/hv'
+
+        console.log('Cleaning up Hyperverge directory:', hvDir)
+
+        try {
+          // List all files in the directory
+          const files = await readDirectoryAsync(hvDir)
+
+          // Delete all .jpg files
+          for (const file of files) {
+            if (file.endsWith('.jpg')) {
+              const filePath = `${hvDir}/${file}`
+              console.log('Deleting file:', filePath)
+              await deleteAsync(filePath, { idempotent: true })
+            }
+          }
+          console.log('All .jpg files in Hyperverge directory cleaned up')
+        } catch (e) {
+          console.log('Error cleaning directory contents:', e)
+        }
+      } else {
+        // Not in hv folder, just delete the specific file
+        await deleteAsync(uri, { idempotent: true })
+      }
+    } catch (error) {
+      console.log('Error cleaning up Hyperverge data:', error)
+    }
+  }
+
   const hvDocs = (type: 'front' | 'back') => {
     const closure = async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
@@ -68,7 +109,7 @@ export default function HomeScreen() {
             encoding: 'base64'
           })
 
-          var closure = (error: any, result: any) => {
+          let closure = async (error: any, result: any) => {
             if (error != null && Object.keys(error).length > 0) {
               console.log('error', error)
             } else {
@@ -88,6 +129,11 @@ export default function HomeScreen() {
                 )}, ${JSON.stringify(result)});
                 }
                 `)
+              }
+
+              // Clean up local data after successful upload
+              if (docImageUri) {
+                await cleanUpHypervergeData(docImageUri)
               }
             }
           }
@@ -144,6 +190,11 @@ export default function HomeScreen() {
                 )}, ${JSON.stringify(result)});
               }
             `)
+
+        // Clean up local data after successful capture
+        if (faceImageUri) {
+          await cleanUpHypervergeData(faceImageUri)
+        }
 
         // try {
         //   let params = {}
