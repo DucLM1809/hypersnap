@@ -69,7 +69,9 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/messaging"
+      "@react-native-firebase/messaging",
+      "./plugins/withReleaseSigning.js",
+      "./plugins/withRootGradleConfig.js"
     ],
     "experiments": {
       "typedRoutes": true,
