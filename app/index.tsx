@@ -16,6 +16,7 @@ import { PermissionsAndroid, Platform, Text, View } from 'react-native'
 import { getUniqueId } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
+import { vi } from './locales/vi'
 
 export default function HomeScreen() {
   const webviewRef = useRef<WebView>(null)
@@ -113,13 +114,16 @@ export default function HomeScreen() {
     RNHVDocsCapture.setDocCaptureDescription(
       'Đặt căn cước công dân của bạn vào trong khung hình và chụp ảnh'
     )
+
+    const langVi = JSON.stringify(vi)
+    RNHVDocsCapture.setCustomUIStrings(langVi)
+
     RNHVDocsCapture.start(closure)
   }
 
   const hvFaceCapture = () => {
-    RNHVFaceCapture.setFaceCaptureTitle(
-      'Đặt khuôn mặt của bạn vào trong khung hình'
-    )
+    const langVi = JSON.stringify(vi)
+    RNHVFaceCapture.setCustomUIStrings(langVi)
     RNHVFaceCapture.setLivenessMode(
       RNHyperSnapParams.LivenessModeTextureLiveness
     )
