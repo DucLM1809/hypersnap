@@ -1,3 +1,4 @@
+import { SecurityCheckWrapper } from '@/components/security-check-wrapper'
 import { requestNotificationPermission } from '@/hooks/use-push-notifications'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
@@ -313,42 +314,48 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <WebView
-        ref={webviewRef}
-        originWhitelist={[`${process.env.EXPO_PUBLIC_APP_URL}`]}
-        source={{
-          uri: `${process.env.EXPO_PUBLIC_APP_URL}`
-        }}
-        onMessage={onMessage}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        setSupportMultipleWindows={false}
-        allowsInlineMediaPlayback={false}
-        allowingReadAccessToURL={`${process.env.EXPO_PUBLIC_APP_URL}`}
-        thirdPartyCookiesEnabled={false}
-        javaScriptCanOpenWindowsAutomatically={false}
-        dataDetectorTypes='none'
-        hideKeyboardAccessoryView={true}
-        allowsLinkPreview={false}
-        style={{ flex: 1 }}
-        startInLoadingState
-        bounces={false}
-        overScrollMode='never'
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={false}
-        renderError={() => (
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
-              Could not load the Facing App.\n\nMake sure the dev server is
-              running.
-            </Text>
-          </View>
-        )}
-      />
-    </SafeAreaView>
+    <SecurityCheckWrapper>
+      <SafeAreaView style={{ flex: 1 }}>
+        <WebView
+          ref={webviewRef}
+          originWhitelist={[`${process.env.EXPO_PUBLIC_APP_URL}`]}
+          source={{
+            uri: `${process.env.EXPO_PUBLIC_APP_URL}`
+          }}
+          onMessage={onMessage}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          setSupportMultipleWindows={false}
+          allowsInlineMediaPlayback={false}
+          allowingReadAccessToURL={`${process.env.EXPO_PUBLIC_APP_URL}`}
+          thirdPartyCookiesEnabled={false}
+          javaScriptCanOpenWindowsAutomatically={false}
+          dataDetectorTypes='none'
+          hideKeyboardAccessoryView={true}
+          allowsLinkPreview={false}
+          style={{ flex: 1 }}
+          startInLoadingState
+          bounces={false}
+          overScrollMode='never'
+          scrollEnabled={true}
+          showsVerticalScrollIndicator={false}
+          renderError={() => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{ color: 'red', fontSize: 16, textAlign: 'center' }}>
+                Could not load the Facing App.\n\nMake sure the dev server is
+                running.
+              </Text>
+            </View>
+          )}
+        />
+      </SafeAreaView>
+    </SecurityCheckWrapper>
   )
 }
 
