@@ -29,7 +29,6 @@ export const requestNotificationPermission = async () => {
 
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
         console.warn('Push notification permissions are not granted.')
-        return false
       }
     }
   }

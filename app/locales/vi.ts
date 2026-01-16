@@ -18,5 +18,13 @@ export const vi = {
   faceInstructionsNoGlasses: 'Không đeo kính',
   faceInstructionsProceed: 'Selfie',
   faceRetakeTitleText: 'Vui lòng chụp lại',
-  faceRetakeButton: 'Chụp lại'
+  faceRetakeButton: 'Chụp lại',
+
+  // --- Specific Liveness Errors (Mask & Multi-face) ---
+  faceInstructionFaceMaskDetected: 'Vui lòng tháo khẩu trang',
+  faceInstructionMultipleFacesDetected: 'Chỉ 1 người trong khung hình',
+
+  // --- Network/General Errors ---
+  networkError: 'Vui lòng kiểm tra kết nối mạng',
+  internalError: 'Có lỗi xảy ra, vui lòng thử lại'
 }

@@ -174,6 +174,14 @@ export default function HomeScreen() {
     RNHVFaceCapture.setLivenessMode(
       RNHyperSnapParams.LivenessModeTextureLiveness
     )
+    RNHVFaceCapture.setLivenessAPIParameters(
+      JSON.stringify({
+        checkMask: 'yes',
+        allowMask: 'no',
+        checkMultipleFaces: 'yes',
+        allowMultipleFaces: 'no'
+      })
+    )
     RNHVFaceCapture.start(async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
         console.log('error', error)
