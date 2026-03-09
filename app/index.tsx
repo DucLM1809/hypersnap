@@ -172,7 +172,7 @@ export default function HomeScreen() {
     const langVi = JSON.stringify(vi)
     RNHVFaceCapture.setCustomUIStrings(langVi)
     RNHVFaceCapture.setLivenessMode(
-      RNHyperSnapParams.LivenessModeTextureLiveness
+      RNHyperSnapParams.LivenessModeTextureLiveness.textureLiveness
     )
     RNHVFaceCapture.setLivenessAPIParameters(
       JSON.stringify({
@@ -182,11 +182,12 @@ export default function HomeScreen() {
         allowMultipleFaces: 'no'
       })
     )
+    RNHVFaceCapture.setShouldReturnFullImageUri(true)
     RNHVFaceCapture.start(async (error: any, result: any) => {
       if (error != null && Object.keys(error).length > 0) {
         console.log('error', error)
       } else {
-        const faceImageUri = result['imageUri']
+        const faceImageUri = result['fullImageUri']
 
         const base64 = await readAsStringAsync(`file://${faceImageUri}`, {
           encoding: 'base64'
