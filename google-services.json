@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "33007810583",
+    "project_id": "facingapp-8b017",
+    "storage_bucket": "facingapp-8b017.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33007810583:android:e94cca63baa3b16acd4452",
+        "android_client_info": {
+          "package_name": "com.duc1809.FacingApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB64MNt-t0NC_6bS0luxQX7wQNJYyQXYE8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
